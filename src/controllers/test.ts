@@ -1,6 +1,6 @@
 import * as express from 'express';
 import * as uuid from 'uuid';
-
+import * as fs from 'fs';
 
 const STATUS = {
     CREATED: 1,
@@ -29,8 +29,15 @@ export class TestController {
         this.tests = {};
     }
 
+    public home(req: express.Request, res: express.Response, next: express.NextFunction) {
+          res.render('test', {
+            title: 'Tests'
+          });
+    }
+
     public createTest(req: express.Request, res: express.Response, next: express.NextFunction) {
         const id = uuid.v1();
+        const lang = req.query.lang;
         this.tests[id] = {
             id: id,
             timestamp: undefined,
@@ -38,25 +45,103 @@ export class TestController {
             currentTime: DEFAULT_TIME,
             status: STATUS.CREATED
         };
-        res.send(`generate test: ${id}`);
+          res.render('test/test', {
+            title: 'Tests',
+            id: id,
+            lang: lang
+          });
     }
 
     public startTest(req: express.Request, res: express.Response, next: express.NextFunction) {
-        const id = req.query.id;
-        const test = this.tests[id];
-        if (test && test.status === STATUS.CREATED) {
+        const id = req.body.testId;
 
+        if (this.start(id)) {
+
+            res.render('test/testForm', {
+                title: 'Test Form',
+                id: id,
+                test: this.getTestData()
+            });
+
+        } else {
+            res.send('Unable to start test. Check the test exist and is not started or completed');
+        }
+    }
+
+    public testHomeById(req: express.Request, res: express.Response, next: express.NextFunction) {
+          const id = req.query.id;
+          const testInfo = this.tests[id];
+          if (testInfo && testInfo.status === STATUS.CREATED) {
+            res.render('test/testHomeById', {
+                title: 'Tests',
+                id: id
+            });
+          } else {
+              res.send('Unable to start test. Check the test exist and is not started or completed');
+          }
+    }
+
+    public startTestById(req: express.Request, res: express.Response, next: express.NextFunction) {
+        const id = req.body.testId;
+
+        if (this.start(id)) {
+
+            res.render('test/testFormById', {
+                title: 'Test Form',
+                id: id,
+                test: this.getTestData()
+            });
+
+        } else {
+            res.send('Unable to start test. Check the test exist and is not started or completed');
+        }
+    }
+
+    public completeTestById(req: express.Request, res: express.Response, next: express.NextFunction) {
+        const id = req.body.testId;
+        let status = '';
+        if (this.complete(id)) {
+            status = 'Test completed';
+        } else {
+            status = 'unable to complete the test. Check the test is running and the timer is not finished';
+        }
+
+        res.render('test/testCompleteById', {
+            title: 'Test Finished',
+            id: id,
+            status: status
+
+        });
+    }
+
+    private start(id: string) {
+        // Get test info
+        const testInfo = this.tests[id];
+
+        if (testInfo && testInfo.status === STATUS.CREATED) {
             // Start timer (is not running)
             this.timer = setInterval(() => {
                 this.updateTime();
             }, 1000);
 
-            test.startTime = Date.now();
-            test.status = STATUS.RUNNING;
-            res.send('Test Running');
-        } else {
-            res.send('Unable to start test. Check the test exist and is not started or completed');
+            testInfo.startTime = Date.now();
+            testInfo.status = STATUS.RUNNING;
+
+            return true;
+
         }
+
+        return false;
+    }
+
+    private complete(id: string) {
+        const testInfo = this.tests[id];
+        if (testInfo && testInfo.status === STATUS.RUNNING && testInfo.status !== STATUS.TIMEOUT) {
+            testInfo.status = STATUS.COMPLETE;
+            testInfo.endTime = Date.now();
+            return true;
+        }
+        return false;
     }
 
     private updateTime() {
@@ -80,17 +165,87 @@ export class TestController {
         }
     }
 
+    private getTestData(): any {
+        console.log(__dirname);
+        // const filepath = __dirname + '/data/java.test.json';
+        // const data = fs.readFileSync(filepath);
+        // return JSON.parse(data);
+
+
+       const obj = {
+    'testId': 1,
+    'language': 'JAVA',
+    'questions': [
+
+        {
+            'id': 1,
+            'question': 'Given an array of  integers, can you find the sum of its elements?',
+            'code': `
+import java.io.*;
+import java.util.*;
+import java.text.*;
+import java.math.*;
+import java.util.regex.*;
+
+public class Solution {
+
+    static int simpleArraySum(int n, int[] ar) {
+        // Complete this function
+    }
+
+    public static void main(String[] args) {
+        Scanner in = new Scanner(System.in);
+        int n = in.nextInt();
+        int[] ar = new int[n];
+        for(int ar_i = 0; ar_i < n; ar_i++){
+            ar[ar_i] = in.nextInt();
+        }
+        int result = simpleArraySum(n, ar);
+        System.out.println(result);
+    }
+}`
+        },
+
+        {
+            'id': 2,
+            'question': 'question2',
+            'code': 'this is the code for q 2'
+
+        },
+
+        {
+            'id': 3,
+            'question': 'question3',
+            'code': 'this is the code for q3'
+
+        }
+
+    ]
+
+};
+
+return obj;
+    }
+
     public completeTest(req: express.Request, res: express.Response, next: express.NextFunction) {
-        const id = req.query.id;
+        const id = req.body.testId;
         const test = this.tests[id];
+        let status = '';
         if (test && test.status === STATUS.RUNNING && test.status !== STATUS.TIMEOUT) {
             // clearInterval(this.timer);
             test.status = STATUS.COMPLETE;
             test.endTime = Date.now();
-            res.send('Test completed');
+            status = 'Test completed';
         } else {
-            res.send('unable to complete the test. Check the test is running and the timer is not finished');
+            status = 'unable to complete the test. Check the test is running and the timer is not finished';
         }
+
+        res.render('test/complete', {
+            title: 'Test Finished',
+            id: id,
+            status: status
+        });
+
 
     }
 

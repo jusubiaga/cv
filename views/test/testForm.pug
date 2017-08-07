@@ -1,0 +1,31 @@
+extends ../layout
+
+block content
+  .page-header
+    h3 Questions 
+    h4 ID: #{id}
+    h4 Language: #{test.language}
+
+  form.form-horizontal(action='/test/complete', method='POST')
+      input(type='hidden', name='_csrf', value=_csrf)
+      
+      
+      input(type='hidden', name='testId', value=id)
+      
+      ul.list-group
+        each val in test.questions
+            li.list-group-item
+                h5=val.id
+                h4.strong=val.question
+                textarea.form-control(type='text', name='code', id='code') #{val.code}
+                //- .form-group
+                //-     label.col-sm-3.control-label(for='code')
+                //-     .col-sm-7
+                //-         textarea.form-control(type='text', name='code', id='code') #{val.code}
+
+
+      .form-group
+        .col-sm-offset-3.col-sm-4
+          button.btn.btn.btn-primary(type='submit')
+            i.fa.fa-pencil
+            | Submit

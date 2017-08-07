@@ -1,0 +1,29 @@
+extends ../layout
+
+block content
+  .page-header
+    h3 Test ID: #{id}
+
+  form.form-horizontal(action='/test/start', method='POST')
+      input(type='hidden', name='_csrf', value=_csrf)
+      .form-group
+        label.col-sm-3.control-label(for='testId') Test ID
+        .col-sm-7
+          input.form-control(type='text', name='testId', id='testId', value=id)
+      .form-group
+        label.col-sm-3.control-label(for='name') Language
+        .col-sm-7
+          input.form-control(type='text', name='name', id='name', value=lang)
+      .form-group
+        label.col-sm-3.control-label(for='name') Name
+        .col-sm-7
+          input.form-control(type='text', name='name', id='name', value=user.profile.name)
+      .form-group
+        label.col-sm-3.control-label(for='email') Email
+        .col-sm-7
+          input.form-control(type='text', name='email', id='email', value=user.email)
+      .form-group
+        .col-sm-offset-3.col-sm-4
+          button.btn.btn.btn-primary(type='submit')
+            i.fa.fa-pencil
+            | Start Test
