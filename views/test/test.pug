@@ -17,11 +17,12 @@ block content
       .form-group
         label.col-sm-3.control-label(for='name') Name
         .col-sm-7
-          input.form-control(type='text', name='name', id='name', value=user.profile.name)
+          input.form-control(type='text', name='name', id='name', value=user && user.profile.name)
       .form-group
         label.col-sm-3.control-label(for='email') Email
         .col-sm-7
-          input.form-control(type='text', name='email', id='email', value=user.email)
+          input.form-control(type='text', name='email', id='email', value=user && user.email)
+
       .form-group
         .col-sm-offset-3.col-sm-4
           button.btn.btn.btn-primary(type='submit')

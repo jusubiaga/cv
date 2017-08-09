@@ -1,6 +1,7 @@
 import * as express from 'express';
 import * as uuid from 'uuid';
 import * as fs from 'fs';
+import EXAM_DATA from '../data/test-data.mock';
 
 const STATUS = {
     CREATED: 1,
@@ -10,10 +11,11 @@ const STATUS = {
 };
 
 
-const DEFAULT_TIME = 30;
+const DEFAULT_TIME = 50;
 
 interface TestInfo {
     id: string;
+    created: number;
     startTime: number;
     endTime: number;
     timer: number;
@@ -40,7 +42,9 @@ export class TestController {
         const lang = req.query.lang;
         this.tests[id] = {
             id: id,
-            timestamp: undefined,
+            created: Date.now(),
+            startTime: undefined,
+            endTime: undefined,
             timer: undefined,
             currentTime: DEFAULT_TIME,
             status: STATUS.CREATED
@@ -166,65 +170,8 @@ export class TestController {
     }
 
     private getTestData(): any {
-        console.log(__dirname);
-        // const filepath = __dirname + '/data/java.test.json';
-        // const data = fs.readFileSync(filepath);
-        // return JSON.parse(data);
-
-
-       const obj = {
-    'testId': 1,
-    'language': 'JAVA',
-    'questions': [
-
-        {
-            'id': 1,
-            'question': 'Given an array of  integers, can you find the sum of its elements?',
-            'code': `
-import java.io.*;
-import java.util.*;
-import java.text.*;
-import java.math.*;
-import java.util.regex.*;
-
-public class Solution {
-
-    static int simpleArraySum(int n, int[] ar) {
-        // Complete this function
-    }
-
-    public static void main(String[] args) {
-        Scanner in = new Scanner(System.in);
-        int n = in.nextInt();
-        int[] ar = new int[n];
-        for(int ar_i = 0; ar_i < n; ar_i++){
-            ar[ar_i] = in.nextInt();
-        }
-        int result = simpleArraySum(n, ar);
-        System.out.println(result);
-    }
-}`
-        },
-
-        {
-            'id': 2,
-            'question': 'question2',
-            'code': 'this is the code for q 2'
-
-        },
-
-        {
-            'id': 3,
-            'question': 'question3',
-            'code': 'this is the code for q3'
-
-        }
-
-    ]
-
-};
-
-return obj;
+        // TBD Retrieve this data from db.
+        return EXAM_DATA;
     }
 
     public completeTest(req: express.Request, res: express.Response, next: express.NextFunction) {
