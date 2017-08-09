@@ -1,0 +1,26 @@
+{
+	"questions": [{
+		"id": 1,
+		"type": "SINGLE-ANSWER",
+		"level": 7,
+		"question-encoding": "base64/github-markdown",
+		"question": "IyMjIyBXaGF0IHdpbGwgYmUgdGhlIG91dHB1dCBvZiB0aGUgcHJvZ3JhbT8NCg0KYGBgamF2YQ0KY2xhc3MgVGVzdCANCnsNCglwdWJsaWMgc3RhdGljIHZvaWQgbWFpbihTdHJpbmcgW10gYXJncykgDQoJew0KCQlUZXN0IHAgPSBuZXcgVGVzdCgpOw0KCQlwLnN0YXJ0KCk7DQoJfQ0KDQoJdm9pZCBzdGFydCgpIA0KCXsNCgkJYm9vbGVhbiBiMSA9IGZhbHNlOw0KCQlib29sZWFuIGIyID0gZml4KGIxKTsNCgkJU3lzdGVtLm91dC5wcmludGxuKGIxICsgIiAiICsgYjIpOw0KCX0NCg0KCWJvb2xlYW4gZml4KGJvb2xlYW4gYjEpIA0KCXsNCgkJYjEgPSB0cnVlOw0KCQlyZXR1cm4gYjE7DQoJfQ0KfQ0KYGBgDQo=",
+		"answers": [{
+			"id": 1,
+			"desc": "MTIgMTU=",
+			"valid": false
+		}, {
+			"id": 2,
+			"desc": "MTUgMTU=",
+			"valid": true
+		}, {
+			"id": 3,
+			"desc": "MyA0IDUgMyA3IDU=",
+			"valid": false
+		}, {
+			"id": 4,
+			"desc": "MyA3IDUgMyA3IDU=",
+			"valid": false
+		}]
+	}]
+}
