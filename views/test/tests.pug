@@ -1,0 +1,14 @@
+extends ../layout
+
+block content
+  h2 This is the Tests List (WIP)
+  hr
+
+  ul(class="list-group")
+    each item in tests
+        li(class="list-group-item")
+            - var created = Date(item.created)
+            h4 ID: #{item.id}
+            h5 Status: #{item.status}
+            h5 Created: #{created}
+            h5 CountDown: #{item.countdown}

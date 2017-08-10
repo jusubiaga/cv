@@ -32,7 +32,6 @@ import * as userController from './controllers/user';
 import * as apiController from './controllers/api';
 import * as contactController from './controllers/contact';
 import { TestController } from './controllers/test';
-import { myTestsController } from './controllers/mytests';
 
 
 /**
@@ -125,19 +124,19 @@ app.post('/account/delete', passportConfig.isAuthenticated, userController.postD
 app.get('/account/unlink/:provider', passportConfig.isAuthenticated, userController.getOauthUnlink);
 
 const testController = new TestController();
-app.get('/test', testController.home.bind(testController));
-app.get('/test/create', testController.createTest.bind(testController));
-app.get('/test/tests', testController.getAllTests.bind(testController));
-app.get('/test/:id', testController.getTestById.bind(testController));
+// PAGES
+app.get('/exams', testController.examList.bind(testController));
+app.post('/test/create', testController.createTest.bind(testController));
+app.get('/tests', testController.testList.bind(testController));
+app.get('/test/home', testController.testHome.bind(testController));
 app.post('/test/complete', testController.completeTest.bind(testController));
 app.post('/test/start', testController.startTest.bind(testController));
+app.post('/test/send', testController.sendTest.bind(testController));
 
-app.get('/mytests', myTestsController.index.bind(testController));
 
-app.get('/cv/test/home', testController.testHomeById.bind(testController));
-app.post('/cv/test/start', testController.startTestById.bind(testController));
-app.post('/cv/test/complete', testController.completeTestById.bind(testController));
-
+// APIS (WIP)
+app.get('/api/v1/tests', testController.getAllTests.bind(testController));
+app.get('/api/v1/test/:id', testController.getTestById.bind(testController));
 
 /**
  * API examples routes.

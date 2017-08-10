@@ -2,9 +2,10 @@ extends ../layout
 
 block content
   .page-header
-    h3 Test ID: #{id}
+    h3 Test has been created ! 
+    h4 Test ID: #{id}
 
-  form.form-horizontal(action='/test/start', method='POST')
+  form.form-horizontal(action='/test/send', method='POST')
       input(type='hidden', name='_csrf', value=_csrf)
       .form-group
         label.col-sm-3.control-label(for='testId') Test ID
@@ -26,5 +27,5 @@ block content
       .form-group
         .col-sm-offset-3.col-sm-4
           button.btn.btn.btn-primary(type='submit')
-            i.fa.fa-pencil
-            | Start Test
+            i.fa.fa-paper-plane
+            | Send Test

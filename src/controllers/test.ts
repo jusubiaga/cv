@@ -4,10 +4,11 @@ import * as fs from 'fs';
 import EXAM_DATA from '../data/test-data.mock';
 
 const STATUS = {
-    CREATED: 1,
-    RUNNING: 2,
-    COMPLETE: 3,
-    TIMEOUT: 4
+    CREATED: 'CREATED',
+    SENT: 'SENT',
+    RUNNING: 'RUNNING',
+    COMPLETE: 'COMPLETED',
+    TIMEOUT: 'TIMEOUT'
 };
 
 
@@ -16,10 +17,11 @@ const DEFAULT_TIME = 50;
 interface TestInfo {
     id: string;
     created: number;
-    startTime: number;
-    endTime: number;
-    timer: number;
-    status: number;
+    sent: number;
+    started: number;
+    completed: number;
+    countdown: number;
+    status: string;
 }
 
 
@@ -37,23 +39,90 @@ export class TestController {
           });
     }
 
+    public testList(req: express.Request, res: express.Response, next: express.NextFunction) {
+          res.render('test/tests', {
+            title: 'Tests',
+            tests: this.tests
+          });
+    }
+
+    // TODO Move to the exam module
+    public examList(req: express.Request, res: express.Response, next: express.NextFunction) {
+          const lang = req.query.lang;
+          // TODO This should be get from DB (Mock for now)
+          const exams = [
+              {
+                  id: '#EXAM1',
+                  name: 'Exam1',
+                  desc: 'This is the exam 1'
+              },
+              {
+                  id: '#EXAM2',
+                  name: 'Exam2',
+                  desc: 'This is the exam 2'
+              },
+              {
+                  id: '#EXAM3',
+                  name: 'Exam3',
+                  desc: 'This is the exam 3'
+              },
+
+          ];
+          res.render('test/exams', {
+            title: 'Exams',
+            lang: lang,
+            exams: exams
+          });
+    }
+
     public createTest(req: express.Request, res: express.Response, next: express.NextFunction) {
         const id = uuid.v1();
-        const lang = req.query.lang;
+        const lang = req.body.lang;
         this.tests[id] = {
             id: id,
             created: Date.now(),
-            startTime: undefined,
-            endTime: undefined,
-            timer: undefined,
-            currentTime: DEFAULT_TIME,
+            started: undefined,
+            sent: undefined,
+            completed: undefined,
+            countdown: DEFAULT_TIME,
             status: STATUS.CREATED
         };
-          res.render('test/test', {
+          res.render('test/created', {
             title: 'Tests',
             id: id,
             lang: lang
           });
+    }
+
+    public testHome(req: express.Request, res: express.Response, next: express.NextFunction) {
+          const id = req.query.id;
+          const testInfo = this.tests[id];
+          if (testInfo && testInfo.status === STATUS.SENT) {
+            res.render('test/testHomeById', {
+                title: 'Tests',
+                id: id
+            });
+          } else {
+              res.send('Unable to start test. Check the test exist and is not started or completed');
+          }
+    }
+
+    public sendTest(req: express.Request, res: express.Response, next: express.NextFunction) {
+        const id = req.body.testId;
+        // Get test info
+        const testInfo = this.tests[id];
+
+        if (testInfo && testInfo.status === STATUS.CREATED) {
+            testInfo.sent = Date.now();
+            testInfo.status = STATUS.SENT;
+            res.render('test/sent', {
+                title: 'Test Sent',
+                id: id
+            });
+
+        } else {
+            res.send('Unable to send test. Check the test exist and is not started or completed');
+        }
     }
 
     public startTest(req: express.Request, res: express.Response, next: express.NextFunction) {
@@ -70,19 +139,6 @@ export class TestController {
         } else {
             res.send('Unable to start test. Check the test exist and is not started or completed');
         }
-    }
-
-    public testHomeById(req: express.Request, res: express.Response, next: express.NextFunction) {
-          const id = req.query.id;
-          const testInfo = this.tests[id];
-          if (testInfo && testInfo.status === STATUS.CREATED) {
-            res.render('test/testHomeById', {
-                title: 'Tests',
-                id: id
-            });
-          } else {
-              res.send('Unable to start test. Check the test exist and is not started or completed');
-          }
     }
 
     public startTestById(req: express.Request, res: express.Response, next: express.NextFunction) {
@@ -122,13 +178,13 @@ export class TestController {
         // Get test info
         const testInfo = this.tests[id];
 
-        if (testInfo && testInfo.status === STATUS.CREATED) {
+        if (testInfo && testInfo.status === STATUS.SENT) {
             // Start timer (is not running)
             this.timer = setInterval(() => {
                 this.updateTime();
             }, 1000);
 
-            testInfo.startTime = Date.now();
+            testInfo.started = Date.now();
             testInfo.status = STATUS.RUNNING;
 
             return true;
@@ -142,7 +198,7 @@ export class TestController {
         const testInfo = this.tests[id];
         if (testInfo && testInfo.status === STATUS.RUNNING && testInfo.status !== STATUS.TIMEOUT) {
             testInfo.status = STATUS.COMPLETE;
-            testInfo.endTime = Date.now();
+            testInfo.completed = Date.now();
             return true;
         }
         return false;
@@ -154,8 +210,8 @@ export class TestController {
         // TODO implement stop interval if no test is active.
         Object.keys(this.tests).forEach((key: any) => {
             if (this.tests[key].status === STATUS.RUNNING) {
-                this.tests[key].currentTime--;
-                if (this.tests[key].currentTime < 0) {
+                this.tests[key].countdown--;
+                if (this.tests[key].countdown < 0) {
                     this.tests[key].status = STATUS.TIMEOUT;
                 }
                 testsRunning = true;
@@ -179,15 +235,14 @@ export class TestController {
         const test = this.tests[id];
         let status = '';
         if (test && test.status === STATUS.RUNNING && test.status !== STATUS.TIMEOUT) {
-            // clearInterval(this.timer);
             test.status = STATUS.COMPLETE;
-            test.endTime = Date.now();
+            test.completed = Date.now();
             status = 'Test completed';
         } else {
             status = 'unable to complete the test. Check the test is running and the timer is not finished';
         }
 
-        res.render('test/complete', {
+        res.render('test/completed', {
             title: 'Test Finished',
             id: id,
             status: status
@@ -203,6 +258,4 @@ export class TestController {
     public getTestById(req: express.Request, res: express.Response, next: express.NextFunction) {
         res.status(200).json(this.tests[req.params.id]);
     }
-
-
 }

@@ -1,0 +1,18 @@
+extends ../layout
+
+block content
+  h2 This is the exams List (WIP)
+  h4 Language: #{lang}
+  hr
+  each item in exams
+    div.thumbnail
+        div.caption
+            h3 #{item.name}
+            p #{item.desc}
+        form.form-horizontal(action='/test/create', method='POST')
+            input(type='hidden', name='lang', value=lang)
+            .form-group
+                .col-sm-offset-3.col-sm-4
+                    button.btn.btn.btn-primary(type='submit')
+                        i.fa.fa-pencil
+                        | Create

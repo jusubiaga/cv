@@ -1,0 +1,12 @@
+extends ../layout
+block content
+  - var link = '/test/home?id=' + id
+  .page-header
+    h3 Test has been sent !
+
+  div(class="panel panel-default")
+    div(class="panel-heading")
+        h3 Technical Screen Test ##{id}
+    div(class="panel-body") 
+        p Follow the [INSTRUCTIONS] to start the test (Use the ID to refer to this test)
+        a(href=link) Exam Link
