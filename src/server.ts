@@ -32,6 +32,7 @@ import * as userController from './controllers/user';
 import * as apiController from './controllers/api';
 import * as contactController from './controllers/contact';
 import { TestController } from './controllers/test';
+import { TestAPIController } from './controllers/api/test';
 
 
 /**
@@ -135,8 +136,13 @@ app.post('/test/send', testController.sendTest.bind(testController));
 
 
 // APIS (WIP)
-app.get('/api/v1/tests', testController.getAllTests.bind(testController));
-app.get('/api/v1/test/:id', testController.getTestById.bind(testController));
+// app.get('/api/v1/tests', testController.getAllTests.bind(testController));
+// app.get('/api/v1/test/:id', testController.getTestById.bind(testController));
+
+const testApiController = new TestAPIController();
+app.post('/api/v1/tests', testApiController.createTest.bind(testApiController));
+app.get('/api/v1/tests', testApiController.getAllTests.bind(testApiController));
+app.get('/api/v1/tests/:id', testApiController.getTestById.bind(testApiController));
 
 /**
  * API examples routes.

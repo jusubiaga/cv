@@ -3,7 +3,7 @@ import * as supertest from "supertest";
 
 const request = supertest("http://localhost:8000");
 
-describe("GET /api", () => {
+describe("GET /api/v1/tests", () => {
   it("should return 200 OK", () => {
     request
       .get("/api")
