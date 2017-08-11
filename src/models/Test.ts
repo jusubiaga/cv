@@ -4,7 +4,8 @@ const testSchema = new mongoose.Schema({
     status: String,
     candidateId: String,
     examId: String,
-    createdDate: Date
+    createdDate: Date,
+    sentDate: Date
 });
 
 const Test = mongoose.model('Test', testSchema);

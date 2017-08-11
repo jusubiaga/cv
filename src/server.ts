@@ -143,6 +143,7 @@ const testApiController = new TestAPIController();
 app.post('/api/v1/tests', testApiController.createTest.bind(testApiController));
 app.get('/api/v1/tests', testApiController.getAllTests.bind(testApiController));
 app.get('/api/v1/tests/:id', testApiController.getTestById.bind(testApiController));
+app.post('/api/v1/tests/:id/send', testApiController.sendTest.bind(testApiController));
 
 /**
  * API examples routes.

@@ -48,4 +48,28 @@ export class TestAPIController {
             res.status(code).json(test);
         });
     }
+
+    public sendTest(req: express.Request, res: express.Response, next: express.NextFunction) {
+
+        this.testManager.sendTest(req.params.id, (err, test) => {
+            let code = 200;
+            let body = test;
+
+            if (err) {
+                if (err.name === 'TestNotFound') {
+                    code = 404;
+                    body = {message: 'Test not found'};
+                }
+                else if (err.name === 'TestInvalidState') {
+                    code = 409;
+                    body = {message: 'Test was already sent'};
+                }
+                else {
+                    return next(err);
+                }
+            }
+
+            res.status(code).json(body);
+        });
+    }
 }
