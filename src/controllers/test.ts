@@ -1,6 +1,7 @@
 import * as express from 'express';
 import * as uuid from 'uuid';
 import * as fs from 'fs';
+import { TestManager } from '../domain/testApi';
 import EXAM_DATA from '../data/test-data.mock';
 
 const STATUS = {
@@ -29,8 +30,11 @@ export class TestController {
     private tests: any;
     private timer: any;
 
+    private testManager: TestManager;
+
     constructor() {
         this.tests = {};
+        this.testManager = new TestManager();
     }
 
     public home(req: express.Request, res: express.Response, next: express.NextFunction) {
@@ -40,10 +44,18 @@ export class TestController {
     }
 
     public testList(req: express.Request, res: express.Response, next: express.NextFunction) {
-          res.render('test/tests', {
-            title: 'Tests',
-            tests: this.tests
-          });
+        this.testManager.getAllTestsP()
+        .then((data) => {
+            res.render('test/tests', {
+                title: 'Tests',
+                tests: data
+            });
+
+        })
+        .catch((err) => {
+            // TBD
+            res.send('Error trying get all test !!');
+        });
     }
 
     // TODO Move to the exam module
@@ -75,23 +87,39 @@ export class TestController {
           });
     }
 
+
     public createTest(req: express.Request, res: express.Response, next: express.NextFunction) {
-        const id = uuid.v1();
+        const examId = req.body.examId;
         const lang = req.body.lang;
-        this.tests[id] = {
-            id: id,
-            created: Date.now(),
-            started: undefined,
-            sent: undefined,
-            completed: undefined,
-            countdown: DEFAULT_TIME,
-            status: STATUS.CREATED
-        };
-          res.render('test/created', {
+        this.testManager.createTestP('TBD', examId, 50)
+        .then((data) => {
+            res.render('test/created', {
             title: 'Tests',
-            id: id,
+            id: data._id,
             lang: lang
-          });
+            });
+        })
+        .catch((err) => {
+            // TBD
+            res.send('Error trying create test !!');
+        });
+
+        // const id = uuid.v1();
+        // const lang = req.body.lang;
+        // this.tests[id] = {
+        //     id: id,
+        //     created: Date.now(),
+        //     started: undefined,
+        //     sent: undefined,
+        //     completed: undefined,
+        //     countdown: DEFAULT_TIME,
+        //     status: STATUS.CREATED
+        // };
+        //   res.render('test/created', {
+        //     title: 'Tests',
+        //     id: id,
+        //     lang: lang
+        //   });
     }
 
     public testHome(req: express.Request, res: express.Response, next: express.NextFunction) {

@@ -19,6 +19,30 @@ export class TestManager {
         this.runningTests = {};
     }
 
+    public createTestP(candidateId: string, examId: string, allowedTime: number) {
+
+        const promise = new Promise((resolve, reject) => {
+            const test = new Test({
+                status: STATUS.CREATED,
+                candidateId: candidateId,
+                examId: examId,
+                allowedTime: allowedTime,
+                remainingTime: allowedTime,
+                createdDate: Date.now()
+            });
+
+            test.save( (err, data) => {
+                if (err) {
+                    reject(err);
+                } else {
+                    resolve(data);
+                }
+            });
+
+        });
+        return promise;
+    }
+
     public createTest(candidateId: string, examId: string, allowedTime: number, done: (err: any, test: any) => void) {
 
         const test = new Test({
@@ -48,6 +72,20 @@ export class TestManager {
             }
             done(err, tests);
         });
+    }
+
+    public getAllTestsP() {
+        const promise = new Promise((resolve, reject) => {
+            Test.find({ }, (err, tests) => {
+                if (err) {
+                    reject (err);
+                } else {
+                    resolve(tests);
+                    // TBD get countdown from runnngTest and add to the tests response
+                }
+            });
+        });
+        return promise;
     }
 
     public getTestById(testId: string, done: (err: any, test: any) => void) {

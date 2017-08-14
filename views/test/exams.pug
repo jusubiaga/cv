@@ -11,6 +11,7 @@ block content
             p #{item.desc}
         form.form-horizontal(action='/test/create', method='POST')
             input(type='hidden', name='lang', value=lang)
+            input(type='hidden', name='examId', value=item.id)
             .form-group
                 .col-sm-offset-3.col-sm-4
                     button.btn.btn.btn-primary(type='submit')
