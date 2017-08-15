@@ -96,4 +96,28 @@ export class TestAPIController {
             res.status(code).json(body);
         });
     }
+
+    public completeTest(req: express.Request, res: express.Response, next: express.NextFunction) {
+
+        this.testManager.completeTest(req.params.id, (err, test) => {
+            let code = 200;
+            let body = test;
+
+            if (err) {
+                if (err.name === 'TestNotFound') {
+                    code = 404;
+                    body = {message: 'Test not found'};
+                }
+                else if (err.name === 'TestInvalidState') {
+                    code = 409;
+                    body = {message: 'Test not in RUNNING state'};
+                }
+                else {
+                    return next(err);
+                }
+            }
+
+            res.status(code).json(body);
+        });
+    }
 }

@@ -4,7 +4,7 @@ const STATUS = {
     CREATED: 'CREATED',
     SENT: 'SENT',
     RUNNING: 'RUNNING',
-    COMPLETE: 'COMPLETED',
+    COMPLETED: 'COMPLETED',
     TIMEOUT: 'TIMEOUT'
 };
 
@@ -95,11 +95,39 @@ export class TestManager {
                 console.log('got test: ' + test);
                 if (test.status === STATUS.SENT) {
                     test.status = STATUS.RUNNING;
-                    test.startDate = Date.now();
+                    test.startedDate = Date.now();
                     this.runningTests[testId] = test;
                     this.timer = setInterval(() => {
                         this.updateTime();
                     }, 1000);
+
+                    test.save( (err: any) => {
+                        if (err) {
+                            console.log("Can't update test");
+                        }
+                    });
+                }
+                else {
+                    err = {name: 'TestInvalidState'};
+                }
+            }
+            else {
+                err = {name: 'TestNotFound'};
+            }
+
+            done(err, test);
+        });
+    }
+
+    public completeTest(testId: string, done: (err: any, test: any) => void) {
+        this.getTestById(testId, (err, test) => {
+            if (test) {
+                console.log('got test: ' + test);
+                if (test.status === STATUS.RUNNING) {
+                    test.status = STATUS.COMPLETED;
+                    test.finishedDate = Date.now();
+                    test.remainingTime = 0;
+                    delete this.runningTests[testId];
 
                     test.save( (err: any) => {
                         if (err) {
@@ -129,7 +157,7 @@ export class TestManager {
                 if (this.runningTests[key].remainingTime <= 0) {
                     this.runningTests[key].status = STATUS.TIMEOUT;
                     this.runningTests[key].remainingTime = 0;
-                    this.runningTests[key].finishDate = Date.now();
+                    this.runningTests[key].finishedDate = Date.now();
                     this.runningTests[key].save( (err: any) => {
                         if (err) {
                             console.log("Can't update test");

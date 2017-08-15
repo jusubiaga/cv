@@ -8,8 +8,8 @@ const testSchema = new mongoose.Schema({
     remainingTime: Number,
     createdDate: Date,
     sentDate: Date,
-    startDate: Date,
-    finishDate: Date
+    startedDate: Date,
+    finishedDate: Date
 });
 
 const Test = mongoose.model('Test', testSchema);
