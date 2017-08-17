@@ -3,7 +3,7 @@ import * as mongoose from 'mongoose';
 const testSchema = new mongoose.Schema({
     status: String,
     candidateId: String,
-    examId: String,
+    examId: { type: mongoose.Schema.Types.ObjectId, ref: 'Exam' },
     allowedTime: Number,
     remainingTime: Number,
     createdDate: Date,

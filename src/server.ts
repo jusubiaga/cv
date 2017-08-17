@@ -33,6 +33,8 @@ import * as apiController from './controllers/api';
 import * as contactController from './controllers/contact';
 import { TestController } from './controllers/test';
 import { TestAPIController } from './controllers/api/test';
+import { TaskAPIController } from './controllers/api/task';
+import { ExamAPIController } from './controllers/api/exam';
 
 
 /**
@@ -146,6 +148,14 @@ app.get('/api/v1/tests/:id', testApiController.getTestById.bind(testApiControlle
 app.post('/api/v1/tests/:id/send', testApiController.sendTest.bind(testApiController));
 app.post('/api/v1/tests/:id/start', testApiController.startTest.bind(testApiController));
 app.post('/api/v1/tests/:id/complete', testApiController.completeTest.bind(testApiController));
+const taskApiController = new TaskAPIController();
+app.post('/api/v1/tasks', taskApiController.createTask.bind(taskApiController));
+app.get('/api/v1/tasks', taskApiController.getAllTasks.bind(taskApiController));
+app.get('/api/v1/tasks/:id', taskApiController.getTaskById.bind(taskApiController));
+const examApiController = new ExamAPIController();
+app.post('/api/v1/exams', examApiController.createExam.bind(examApiController));
+app.get('/api/v1/exams', examApiController.getAllExams.bind(examApiController));
+app.get('/api/v1/exams/:id', examApiController.getExamById.bind(examApiController));
 
 /**
  * API examples routes.

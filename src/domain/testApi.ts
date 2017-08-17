@@ -35,7 +35,7 @@ export class TestManager {
         });
     }
 
-    public getAllTests(done: (err: any, test: any) => void) {
+    public getAllTests(done: (err: any, tests: any) => void) {
 
         Test.find({ }, (err, tests) => {
             if (!err && tests) {
