@@ -169,6 +169,31 @@ $ curl -v -s -X GET -H 'Accept: application/json' 'http://localhost:3000/api/v1/
 }
 ```
 
+### Get Test Tasks
+```shell
+$ curl -v -s -X GET -H 'Accept: application/json' 'http://localhost:3000/api/v1/tests/5995dd3d2959581806b78bad/tasks' | python -m json.tool
+
+{
+    "tasks": [
+        {
+            "__v": 0,
+            "_id": "59930b2530367b7f2f8c817e",
+            "description": "This is task 3"
+        },
+        {
+            "__v": 0,
+            "_id": "59931a0b4933797f5ae401b6",
+            "description": "This is task 1"
+        },
+        {
+            "__v": 0,
+            "_id": "59931a644933797f5ae401b7",
+            "description": "This is task 2"
+        }
+    ]
+}
+```
+
 ### Send Test
 ```shell
 $ curl -v -s -X POST -H 'Accept: application/json' 'http://localhost:3000/api/v1/tests/5995dd3d2959581806b78bad/send' | python -m json.tool
