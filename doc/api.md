@@ -223,12 +223,6 @@ $ curl -v -s -X POST -H 'Accept: application/json' 'http://localhost:3000/api/v1
 }
 ```
 
-### Get Test Tasks
-Para presentarle el test al candidato.
-Separado para autorizar
-GET /tests/:id/tasks
-Buscar tests con id, obtener exam_id, buscar exam con id
-Del exam obtener lista de tasks
 
 ### Submit Test Responses
 Para que el candidato submitee sus respuestas

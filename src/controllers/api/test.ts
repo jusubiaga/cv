@@ -49,6 +49,31 @@ export class TestAPIController {
         });
     }
 
+    public getTestTasks(req: express.Request, res: express.Response, next: express.NextFunction) {
+        this.testManager.getTestTasks(req.params.id, (err, tasks) => {
+            let code = 200;
+            let body = undefined;
+            if (err) {
+                if (err.name === 'TestNotFound') {
+                    code = 404;
+                    body = {message: 'Test not found'};
+                }
+                else if (err.name === 'ExamNotFound') {
+                    code = 409;
+                    body = {message: 'Test exam not found'};
+                }
+                else {
+                    return next(err);
+                }
+            }
+            else {
+                body = {tasks: tasks};
+            }
+
+            res.status(code).json(body);
+        });
+    }
+
     public sendTest(req: express.Request, res: express.Response, next: express.NextFunction) {
 
         this.testManager.sendTest(req.params.id, (err, test) => {

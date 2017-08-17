@@ -1,4 +1,5 @@
 import { default as Test } from '../models/Test';
+import { default as Exam } from '../models/Exam';
 
 const STATUS = {
     CREATED: 'CREATED',
@@ -61,6 +62,38 @@ export class TestManager {
                 test = this.runningTests[testId];
             }
             done(err, test);
+        });
+    }
+
+    public getTestTasks(testId: string, done: (err: any, test: any) => void) {
+
+        let tasks: any = undefined;
+
+        Test.findById(testId, (err1, test: any) => {
+
+            if (test) {
+
+                console.log('Exam id: ' + test.examId);
+
+                Exam.findById(test.examId, (err2, exam: any) => {
+                    if (err2 && err2.name === 'CastError') {
+                        // Ignore this error since exam will be undefined anyways
+                    }
+
+                    if (exam) {
+                        tasks = exam.tasks;
+                        done(err1, tasks);
+                    }
+                    else {
+                        err1 = {name: 'ExamNotFound'};
+                        done(err1, undefined);
+                    }
+                }).populate('tasks');
+            }
+            else {
+                err1 = {name: 'TestNotFound'};
+                done(err1, undefined);
+            }
         });
     }
 
