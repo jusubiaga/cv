@@ -50,6 +50,7 @@ export class TestAPIController {
     }
 
     public getTestTasks(req: express.Request, res: express.Response, next: express.NextFunction) {
+
         this.testManager.getTestTasks(req.params.id, (err, tasks) => {
             let code = 200;
             let body = undefined;
@@ -68,6 +69,38 @@ export class TestAPIController {
             }
             else {
                 body = {tasks: tasks};
+            }
+
+            res.status(code).json(body);
+        });
+    }
+
+    public submitTestResponses(req: express.Request, res: express.Response, next: express.NextFunction) {
+
+        this.testManager.submitTestResponses(req.params.id, req.body.responses, (err, testResponses) => {
+            if (err) {
+                return next(err);
+            }
+            res.status(200).json(testResponses);
+        });
+    }
+
+    public getTestResponses(req: express.Request, res: express.Response, next: express.NextFunction) {
+
+        this.testManager.getTestResponses(req.params.id, (err, testResponses) => {
+            let code = 200;
+            let body = undefined;
+            if (err) {
+                if (err.name === 'TestNotFound') {
+                    code = 404;
+                    body = {message: 'Test not found'};
+                }
+                else {
+                    return next(err);
+                }
+            }
+            else {
+                body = {testResponses: testResponses};
             }
 
             res.status(code).json(body);

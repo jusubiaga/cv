@@ -1,5 +1,6 @@
 import { default as Test } from '../models/Test';
 import { default as Exam } from '../models/Exam';
+import { default as TestResponses } from '../models/TestResponses';
 
 const STATUS = {
     CREATED: 'CREATED',
@@ -31,7 +32,7 @@ export class TestManager {
             createdDate: Date.now()
         });
 
-        test.save( (err) => {
+        test.save( (err: any) => {
             done(err, test);
         });
     }
@@ -69,6 +70,7 @@ export class TestManager {
 
         let tasks: any = undefined;
 
+        // TODO: Fix these multiple calls to done()!
         Test.findById(testId, (err1, test: any) => {
 
             if (test) {
@@ -93,6 +95,50 @@ export class TestManager {
             else {
                 err1 = {name: 'TestNotFound'};
                 done(err1, undefined);
+            }
+        });
+    }
+
+    public submitTestResponses(testId: string, responses: any[], done: (err: any, testResponses: any) => void) {
+
+        this.getTestResponses(testId, (err, testResponses) => {
+            if (testResponses) {
+                testResponses.responses = responses;
+                testResponses.submitDate = Date.now();
+
+                testResponses.save( (err: any) => {
+                    done(err, testResponses);
+                });
+            }
+            else {
+                const testResponses = new TestResponses({
+                    testId: testId,
+                    responses: responses,
+                    submitDate: Date.now()
+                });
+
+                testResponses.save( (err: any) => {
+                    done(err, testResponses);
+                });
+            }
+        });
+    }
+
+    public getTestResponses(testId: string, done: (err: any, testResponses: any) => void) {
+
+        Test.findById(testId, (err, test: any) => {
+            if (test) {
+                TestResponses.findOne({testId: testId}, (err, testResponses: any) => {
+                    if (err && err.name === 'CastError') {
+                        err = undefined;
+                    }
+
+                    done(err, testResponses);
+                });
+            }
+            else {
+                err = {name: 'TestNotFound'};
+                done(err, undefined);
             }
         });
     }

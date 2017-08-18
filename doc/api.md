@@ -194,6 +194,56 @@ $ curl -v -s -X GET -H 'Accept: application/json' 'http://localhost:3000/api/v1/
 }
 ```
 
+### Submit Test Responses
+```shell
+$ curl -v -s -X POST -H 'Content-Type: application/json' -d '{"responses": [{"taskId": "59931a0b4933797f5ae401b6", "response": "Response for task 1"}, {"taskId": "59931a644933797f5ae401b7", "response": "Response for task 2"}]}' 'http://localhost:3000/api/v1/tests/5995dd3d2959581806b78bad/responses' | python -m json.tool
+
+{
+    "__v": 2,
+    "_id": "59973c7daff3933bf44cef3c",
+    "responses": [
+        {
+            "_id": "59974005668a743db8be1f0b",
+            "response": "Response for task 1",
+            "taskId": "59931a0b4933797f5ae401b6"
+        },
+        {
+            "_id": "59974005668a743db8be1f0a",
+            "response": "Response for task 2",
+            "taskId": "59931a644933797f5ae401b7"
+        }
+    ],
+    "submitDate": "2017-08-18T19:29:09.195Z",
+    "testId": "5995dd3d2959581806b78bad"
+}
+```
+
+### Get Test Responses
+```shell
+$ curl -v -s -X GET -H 'Accept: application/json' 'http://localhost:3000/api/v1/tests/5995dd3d2959581806b78bad/responses' | python -m json.tool
+
+{
+    "testResponses": {
+        "__v": 2,
+        "_id": "59973c7daff3933bf44cef3c",
+        "responses": [
+            {
+                "_id": "59974005668a743db8be1f0b",
+                "response": "Response for task 1",
+                "taskId": "59931a0b4933797f5ae401b6"
+            },
+            {
+                "_id": "59974005668a743db8be1f0a",
+                "response": "Response for task 2",
+                "taskId": "59931a644933797f5ae401b7"
+            }
+        ],
+        "submitDate": "2017-08-18T19:29:09.195Z",
+        "testId": "5995dd3d2959581806b78bad"
+    }
+}
+```
+
 ### Send Test
 ```shell
 $ curl -v -s -X POST -H 'Accept: application/json' 'http://localhost:3000/api/v1/tests/5995dd3d2959581806b78bad/send' | python -m json.tool
@@ -248,18 +298,6 @@ $ curl -v -s -X POST -H 'Accept: application/json' 'http://localhost:3000/api/v1
 }
 ```
 
-
-### Submit Test Responses
-Para que el candidato submitee sus respuestas
-Se puede utlizar para submitir automaticamente cada cierto tiempo
-POST /tests/:id/responses body: list of task responses c/u con task id
-buscar test con id, obtener test_resp_id, si no existe crear, actualizar responses
-
-### Get Test Responses
-Para corregir
-Deberiamos incluir las respuestas asociadas a cada task?
-GET /tests/:id/responses
-buscar test con id, obtener test_resp_id, buscar test response con id
 
 ### Get Test Solutions
 Para corregir
